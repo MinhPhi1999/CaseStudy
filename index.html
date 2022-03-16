@@ -119,9 +119,11 @@
         switch (event.keyCode) {
             case 39:
                 snake.moveRight();
+                snake.setSrc('image/KLbackside.png')
                 break;
             case 37:
-                snake.moveLeft()
+                snake.moveLeft();
+                snake.setSrc('image/khungLong.png')
                 break;
             case 38:
                 snake.moveUp();
