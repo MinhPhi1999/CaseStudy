@@ -36,6 +36,7 @@
     let rect2 = new Rectangle(0,200,225,40,'red');
     let rect3 = new Rectangle(400,400,225,40,'yellow');
     let circle = new Circle(500,10,30,'yellow');
+    let circle2 = new Circle(10,300,30,'yellow');
     let snake = new Snake(image, 250, 500, 75, 75,25,'image/khungLong.png');
 
     let score = 0;
@@ -56,6 +57,7 @@
         rect2.drawRect(ctx);
         rect3.drawRect(ctx);
         circle.drawCircle(ctx);
+        circle2.drawCircle(ctx);
         drawScore();
     }
     drawImage()
@@ -108,6 +110,14 @@
        if (circle.y+circle.radius>=canvas.height){
            circle.x = Math.floor(Math.random()*(canvas.width-circle.radius));
            circle.y=0;
+       }
+       circle2.dropCircle();
+       clearCanvas();
+       drawImage();
+       checkCrash();
+       if (circle2.y+circle2.radius>=canvas.height){
+           circle2.x = Math.floor(Math.random()*(canvas.width-circle2.radius));
+           circle2.y=0;
        }
    }
     setInterval(dropCircle,15)
@@ -184,6 +194,12 @@
         if(snake.x+snake.width > circle.x - circle.radius && snake.x < circle.x + circle.radius&&snake.y < circle.y+circle.radius && snake.y + snake.height > circle.y - circle.radius){
             alert('Gà vãi!!! SCORE:  '+score)
             circle.y = 1000;
+            window.location.reload()
+
+        }
+        if(snake.x+snake.width > circle2.x - circle2.radius && snake.x < circle2.x + circle2.radius&&snake.y < circle2.y+circle2.radius && snake.y + snake.height > circle2.y - circle2.radius){
+            alert('Gà vãi!!! SCORE:  '+score)
+            circle2.y = 1000;
             window.location.reload()
 
         }
