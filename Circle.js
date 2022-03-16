@@ -17,6 +17,6 @@ class Circle {
         ctx.drawImage(bom,this.x-35,this.y-43,this.radius*2.5,this.radius*2.5)
     }
     dropCircle(){
-        this.y +=3;
+        this.y +=2;
     }
 }
