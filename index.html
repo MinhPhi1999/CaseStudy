@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snake</title>
+    <script src="Snake.js"></script>
+    <script src="Rectangle.js"></script>
+    <script src="Circle.js"></script>
+    <style>
+        canvas {
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            width: 600px;
+            color: #ff001e;
+        }
+    </style>
+
+
+</head>
+<body>
+<div style="background-image: url('image/img.png');  background-size: cover;" >
+    <canvas id="myCanvas"  width="600" height="600" style="border: 15px solid"  >
+    </canvas>
+</div>
+</body>
+</html>
+<script>
+    // vẽ rắn, food, bom
+    let canvas = document.getElementById('myCanvas');
+    let ctx = canvas.getContext('2d');
+    const image = new Image();
+    let rect = new Rectangle(100,0,225,40,'blue');
+    let rect2 = new Rectangle(0,200,225,40,'red');
+    let rect3 = new Rectangle(400,400,225,40,'yellow');
+    let circle = new Circle(500,10,30,'yellow');
+    let snake = new Snake(image, 250, 500, 75, 75,25,'image/snake.png');
+
+    let score = 0;
+
+    function drawScore() {
+        ctx.font = "40px Arial";
+        ctx.fillStyle = "white";
+        ctx.fillText("Score: " + score, 10, 35);
+    }
+
+    image.onload = drawImage;
+
+//hàm vẽ
+    function drawImage() {
+        image.src = snake.src;
+        snake.drawImage(ctx);
+        rect.drawRect(ctx);
+        rect2.drawRect(ctx);
+        rect3.drawRect(ctx);
+        circle.drawCircle(ctx);
+        drawScore();
+    }
+    drawImage()
+
+// hàm rơi
+   function dropRect() {
+       rect.moveDown();
+       drawImage();
+       clearCanvas();
+
+       if (rect.y + rect.height >= canvas.height + 25 ){
+                rect.x = Math.floor(Math.random()*(canvas.width-rect.width));
+           if (rect.y===canvas.height) {
+               rect.y = 0
+           }
+       }
+
+       rect2.moveDown();
+       clearCanvas();
+       drawImage()
+       if (rect2.y + rect2.height >= canvas.height +25 ){
+           rect2.x = Math.floor(Math.random()*(canvas.width-rect2.width));
+           rect2.y = rect.y +200;
+           if (rect2.y===canvas.height){
+               rect2.y=0
+           }
+       }
+
+       rect3.moveDown();
+       clearCanvas();
+       drawImage();
+       if (rect3.y + rect3.height >= canvas.height +25){
+           rect3.x = Math.floor(Math.random()*(canvas.width-rect3.width));
+           rect3.y = rect2.y +200;
+           if (rect3.y===canvas.height){
+               rect3.y=0
+           }
+       }
+
+       getScore()
+       checkCrash();
+   }
+    setInterval(dropRect,500)
+
+   function dropCircle() {
+       circle.dropCircle();
+       clearCanvas();
+       drawImage();
+       checkCrash();
+       if (circle.y+circle.radius>=canvas.height){
+           circle.x = Math.floor(Math.random()*(canvas.width-circle.radius));
+           circle.y=0;
+       }
+   }
+    setInterval(dropCircle,15)
+
+
+
+    // đổi hướng bằng phím
+    function moveSnake(event) {
+        switch (event.keyCode) {
+            case 39:
+                snake.moveRight();
+                break;
+            case 37:
+                snake.moveLeft()
+                break;
+            case 38:
+                snake.moveUp();
+                break;
+            case 40:
+                snake.moveDown();
+                break
+        }
+
+        clearCanvas();
+        drawImage();
+
+    }
+    addEventListener('keydown', moveSnake);
+
+    // check va chạm thành
+    function checkCrash() {
+
+        if (snake.x <0 || snake.x+snake.width >600){
+
+            alert('Gà vãi!!! SCORE:  '+score)
+            snake.setSrc('image/die.png')
+            snake.y=300;
+            snake.x=300;
+            window.location.reload()
+        }
+        if (snake.y <0 || snake.y+snake.height >600){
+            snake.setSrc('image/die.png')
+            alert('Gà vãi!!! SCORE:  '+score)
+            snake.y=300;
+            snake.x=300;
+
+            window.location.reload()
+        }
+        // check va chạm hcn( khúc gỗ)
+        if(snake.x+snake.width>rect.x && snake.x<rect.x+rect.width && snake.y < rect.y + rect.height && snake.y+snake.height>rect.y){
+            snake.setSrc('image/die.png')
+            alert('Gà vãi!!! SCORE:  '+score)
+            rect.y=0;
+            window.location.reload()
+            return;
+        }
+        if(snake.x+snake.width>rect2.x && snake.x<rect2.x+rect2.width && snake.y < rect2.y + rect2.height && snake.y+snake.height>rect2.y){
+            snake.setSrc('image/die.png')
+
+            alert('Gà vãi!!! SCORE:  '+score)
+            rect2.y=0;
+            window.location.reload()
+            return;
+        }
+        if(snake.x+snake.width>rect3.x && snake.x<rect3.x+rect3.width && snake.y < rect3.y + rect3.height && snake.y+snake.height>rect3.y){
+            snake.setSrc('image/die.png')
+            alert('Gà vãi!!! SCORE:  '+score)
+            rect3.y=0;
+            window.location.reload()
+        }
+        //va chạm hình tròn (bom)
+        if(snake.x+snake.width > circle.x - circle.radius && snake.x < circle.x + circle.radius&&snake.y < circle.y+circle.radius && snake.y + snake.height > circle.y - circle.radius){
+            alert('Gà vãi!!! SCORE:  '+score)
+            circle.y = 1000;
+            window.location.reload()
+
+        }
+
+    }
+    function getScore() {
+        // console.log('check hàm')
+        // console.log('rect y ',rect.y)
+        // console.log('REC2 Y ',rect2.y)
+        // console.log('RECT 3 ---> ',rect3.y)
+        if (rect.y>canvas.height-50 || rect2.y>canvas.height-50 || rect3.y >canvas.height-50){
+            score += 1;
+            let audio = new Audio('audio/getScore.mp3')
+            audio.play();
+            drawScore();
+        }
+    }
+    getScore()
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+</script>
